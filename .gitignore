@@ -1,0 +1,19 @@
+*build*/
+.idea/
+logs*/
+doc/html
+doc/doxy.log
+*.user
+*.autosave
+# Generated files
+moc_*
+ui_*
+*.o
+*.moc
+*.prl
+CMakeLists.txt.*
+
+# doxygen
+src/html/
+src/latex/
+
