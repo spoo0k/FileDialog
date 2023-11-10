@@ -11,6 +11,7 @@ using namespace FileDialog;
 
 FilesManager::FilesManager(QObject *parent)
     : QAbstractListModel{parent}
+    , m_filterName("*")
 {
     m_data.reserve(1024);
 }
@@ -76,6 +77,7 @@ void FilesManager::refresh(const QString &dirPath)
         if(info.isFile()) return Types::FileType::File;
         return Types::FileType::Unknown;
     };
+    beginInsertRows(QModelIndex(), 0 , d.entryInfoList().size() - 1);
     for (const auto &item : d.entryInfoList()) {
         m_data.push_back({.name = item.fileName(),
                           .absolutePath = item.absoluteFilePath(),
@@ -87,6 +89,7 @@ void FilesManager::refresh(const QString &dirPath)
                           .permissions = item.permissions(),
                           .owner = item.owner()});
     }
+    endInsertRows();
 }
 
 void FilesManager::clear()
