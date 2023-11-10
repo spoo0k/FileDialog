@@ -8,16 +8,17 @@
 
 namespace Types{
     enum class FileType {
+        Unknown,
         Directory,
         File,
-        Link
+        SymLink
     };
 
     struct FileNode
     {
         QString name{};
         QString absolutePath{};
-        FileType type{};
+        FileType type{FileType::Unknown};
         uint64_t size{0};
         QDateTime createTime{};
         QDateTime updateTime{};

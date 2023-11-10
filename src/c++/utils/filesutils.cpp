@@ -24,12 +24,11 @@ namespace Utils::Files {
     {
         static std::array<QString , 7> prefixes{ " bit", " B", " KB", " MB", " GB", " TB", " PB" };
         auto log1024 = [](auto &num) -> int{return static_cast<int>(std::log(num) / std::log(1024));};
-        auto exp = size == 0 ? 0 : log1024(size);
+        const auto exp = size == 0 ? 0 : log1024(size);
         return QString::number(static_cast<float>(size) / std::pow(1024, exp), 'f', 2) + prefixes[exp + 1];
-
     }
 
-    QString formatFilePermissis(QFileDevice::Permissions permissions)
+    QString formatFilePermissis(const QFileDevice::Permissions permissions)
     {
         QString result{};
         result += permissions & QFileDevice::Permission::ReadOwner  ? "r" : "_";
