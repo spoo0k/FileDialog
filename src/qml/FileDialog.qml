@@ -31,6 +31,7 @@ Dialog {
             font.pixelSize: 18
             font.bold: true
             text: baseItem.title
+            color: __pallette.white
         }
     }
 
@@ -40,6 +41,52 @@ Dialog {
         property color white: "#ffffff"
         property color black: "#000000"
         property color background: "#2f4f4f"
+        property color transparent: "#00000000"
+    }
+
+    component FileLineDelegate: Pane
+    {
+        id: __fileLineDelegate
+        property string name;
+        property string size;
+        property string iconSource;
+        bottomPadding: 2
+        background: Rectangle {color: __pallette.transparent}
+        RowLayout {
+            anchors.fill: parent
+            Button {
+                enabled: false
+                Layout.fillHeight: true
+                Layout.preferredWidth: height
+                palette.button: __pallette.transparent
+                Material.background: __pallette.transparent
+                flat: true
+                hoverEnabled: false
+                icon.source: __fileLineDelegate.iconSource
+            }
+            Rectangle {color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
+            Label {
+                id: __name
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                color: __pallette.white
+//                text: "Имя"
+                text: __fileLineDelegate.name
+            }
+            Rectangle {color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
+            Label {
+                id: __size
+                Layout.fillHeight: true
+                Layout.preferredWidth: baseItem.width / 4
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                color: __pallette.white
+//                text: "Размер"
+                text: __fileLineDelegate.size
+            }
+        }
     }
 
 
@@ -52,17 +99,25 @@ Dialog {
             color: Qt.lighter(__pallette.background, 1.5)
             Layout.fillWidth: true
             Layout.fillHeight: true
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 0
+                FileLineDelegate { Layout.fillWidth: true; name: "Имя"; size: "Размер"}
+                Control {background: Rectangle{color: __pallette.background;} Layout.fillWidth: true; Layout.preferredHeight: 2; Layout.leftMargin: 2; Layout.rightMargin: 2;}
+                ListView {
+                    id: __dataLv
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: 5
+                    delegate: FileLineDelegate {width: __dataLv.width; name: "Имя" + model.index; size: model.index}
+                }
+            }
         }
         Control {
             Layout.fillWidth: true
             Layout.preferredHeight: __searchType.contentHeight * 2
-            //            background: Rectangle{
-            //                radius: 4
-            //                color: Qt.lighter(__pallette.background, 1.5)
-            //            }
             RowLayout {
                 anchors.fill: parent
-                //                anchors.margins: 5
                 Rectangle {
                     id: __searchMaskItem
                     Layout.fillHeight:  true
@@ -71,7 +126,6 @@ Dialog {
                     radius: 4
                     RowLayout{
                         anchors.fill: parent
-
                         anchors.leftMargin: 5
                         anchors.rightMargin: 5
                         Label {
@@ -80,6 +134,7 @@ Dialog {
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             text: "Имя файла"
+                            color: __pallette.white
                         }
                         Rectangle {color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
                         Rectangle {
@@ -116,6 +171,7 @@ Dialog {
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             text: "Тип файла"
+                            color: __pallette.white
                         }
                         Rectangle {color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
                         Label {
@@ -123,6 +179,7 @@ Dialog {
                             width: contentWidth
                             height: contentHeight
                             text: ".json"
+                            color: __pallette.white
                         }
                     }
                 }
