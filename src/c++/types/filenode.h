@@ -18,6 +18,7 @@ namespace Types{
     {
         QString name{};
         QString absolutePath{};
+        QString completeSuffix{};
         FileType type{FileType::Unknown};
         uint64_t size{0};
         QDateTime createTime{};

@@ -7,12 +7,17 @@ import QtQuick.Controls.Material 2.15
 ApplicationWindow  {
     id: window_root;
     title: ""
-    Material.theme: Material.Dark
+//    Material.theme: Material.Dark
 
+    Button{
+        anchors.top: parent.top
+        anchors.left: parent.left
+        onClicked: fileDialog.open()
+    }
 
-
-
-
+    FileDialog {
+        id: fileDialog
+    }
 
     Shortcut {
         sequence: StandardKey.Quit;

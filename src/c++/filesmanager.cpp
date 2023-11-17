@@ -81,6 +81,7 @@ void FilesManager::refresh(const QString &dirPath)
     for (const auto &item : d.entryInfoList()) {
         m_data.push_back({.name = item.fileName(),
                           .absolutePath = item.absoluteFilePath(),
+                          .completeSuffix = item.completeSuffix(),
                           .type = checkType(item),
                           .size = static_cast<uint64_t>(item.size()),
                           .createTime = item.birthTime(),
