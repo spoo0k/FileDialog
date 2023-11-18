@@ -10,6 +10,7 @@ namespace Utils::Files
     bool removeFile(const QString &fName);
     bool removeDir(const QString &dName);
     bool removeDirRecursively(const QString &dName);
+    bool rename(const QString &oldName, const QString &newName);
 
     QString formatFileSize(uint64_t size);
     QString formatFilePermissis(QFileDevice::Permissions permissions);

@@ -45,4 +45,10 @@ namespace Utils::Files {
         result += permissions & QFileDevice::Permission::ExeOther   ? "x" : "_";
         return result;
     }
+
+    bool rename(const QString &oldName, const QString &newName)
+    {
+        return QDir().rename(oldName, newName);
+    }
+
 }

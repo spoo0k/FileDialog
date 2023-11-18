@@ -9,6 +9,10 @@
 #include <QtQuickControls2/QQuickStyle>
 #include <QtWidgets/QApplication>
 
+#include <filesmanager.h>
+
+
+
 
 #if defined(Q_OS_WIN)
 #include <windows.h>
@@ -16,6 +20,7 @@
 
 
 int main(int argc, char* argv[]) {
+    qDebug() << sizeof(long long);
 #if defined(Q_OS_WIN)
     FreeConsole();
 #endif
@@ -39,6 +44,8 @@ int main(int argc, char* argv[]) {
 
     QQmlEngine engine;
     QObject::connect(&engine, &QQmlEngine::quit, qApp, &QCoreApplication::quit);
+
+    qmlRegisterType<FileDialog::FilesManager>("FileDialog.FilesManager", 1, 0, "FilesManager");
 
     QQmlComponent component(&engine);
     QQuickWindow::setDefaultAlphaBuffer(true);

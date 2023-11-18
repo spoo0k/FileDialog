@@ -1,8 +1,9 @@
 #include "filesmanager.h"
 
 #include <cassert>
-#include <QtCore/QFileInfo>
 #include <QtCore/QDir>
+#include <QtCore/QDebug>
+#include <QtCore/QFileInfo>
 #include <utils/filesutils.h>
 
 #define assertm(exp, msg) assert(((void)msg, exp))
@@ -12,8 +13,10 @@ using namespace FileDialog;
 FilesManager::FilesManager(QObject *parent)
     : QAbstractListModel{parent}
     , m_filterName("*")
+    ,m_currentIndex{-1}
 {
     m_data.reserve(1024);
+    connect(this, &FilesManager::currentPathChanged, this, [this](){refresh(currentPath());});
 }
 
 int FilesManager::rowCount(const QModelIndex &) const
@@ -100,6 +103,53 @@ void FilesManager::clear()
     endRemoveRows();
 }
 
+QString FilesManager::name(int index)
+{
+    if(index < 0 || index >= m_data.size()) {
+        return {};
+    }
+    return m_data.at(index).name;
+}
+
+QString FilesManager::currentName()
+{
+    return name(currentIndex());
+}
+
+void FilesManager::rename(int index, QString newName)
+{
+    if(index < 0 || index >= m_data.size() || m_data.at(index).name == newName) {
+        return;
+    }
+    auto path = m_data.at(index).absolutePath.split('/');
+    path[path.size() - 1] = newName;
+    auto newPath = path.join("/");
+    qDebug() << newPath;
+    auto res = Utils::Files::rename(m_data.at(index).absolutePath, newPath);
+    if(not res) {
+        emit dataChanged(createIndex(index, 0), createIndex(index, 0));
+        qWarning() << "Error rename file from : " << m_data.at(index).absolutePath<< ". To: " << newPath;
+    }
+    else{
+        m_data[index].absolutePath = newPath;
+        m_data[index].name = newName;
+        emit dataChanged(createIndex(index, 0), createIndex(index, 0));
+        qInfo() << "Rename file from : " << m_data.at(index).absolutePath<< ". To: " << newPath;
+    }
+}
+
+void FilesManager::remove(int index)
+{
+    if(index < 0 || index >= m_data.size()) {
+        return;
+    }
+    if(Utils::Files::removeFile(m_data.at(index).absolutePath)) {
+        beginRemoveRows(QModelIndex(), index, index);
+        m_data.erase(m_data.cbegin() + index);
+        endRemoveRows();
+    }
+}
+
 QString FilesManager::targetPath() const { return m_targetPath; }
 void FilesManager::setTargetPath(const QString &newTargetPath)
 {
@@ -125,4 +175,14 @@ void FilesManager::setFilterName(const QString &newFilterName)
         return;
     m_filterName = newFilterName;
     emit filterNameChanged();
+}
+
+int FilesManager::currentIndex() const { return m_currentIndex; }
+void FilesManager::setCurrentIndex(int newCurrentIndex)
+{
+    if(m_currentIndex == newCurrentIndex) {
+        return;
+    }
+    m_currentIndex = newCurrentIndex;
+    emit currentIndexChanged();
 }
