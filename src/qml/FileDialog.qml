@@ -93,6 +93,10 @@ Dialog {
             TextInput {
                 id: __name
                 enabled: false
+                onFocusChanged: {
+                    console.log("focusChanged", focus)
+                }
+                onActiveFocusChanged: {console.log("onActiveFocusChanged", activeFocus)}
                 onEnabledChanged: {
                     if(enabled) {
                         forceActiveFocus()
@@ -105,7 +109,10 @@ Dialog {
                 color: __pallette.white
                 text: __fileLineDelegate.name
                 onTextChanged: {if(text != __fileLineDelegate.name) __fileLineDelegate.newName = text;}
-                Keys.onPressed: { if(event.key === Qt.Key_Return) {parent.enabled = false; __fileLineDelegate.acceptRename()}}
+                Keys.onPressed: {
+                    if(event.key === Qt.Key_Return) {parent.enabled = false; __fileLineDelegate.acceptRename()}
+                    if(event.key === Qt.Key_Escape) {parent.enabled = false; __name.text = __fileLineDelegate.name;}
+                }
             }
             Rectangle {visible: __fileLineDelegate.isHeader; color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
             Label {
@@ -246,6 +253,7 @@ Dialog {
                                        if(mouse.button === Qt.LeftButton) { __filesManager.currentIndex = __filesManager.currentIndex === model.index ? -1 : model.index; }
                                        if(mouse.button === Qt.RightButton) { __fileActionDialog.open(); __filesManager.currentIndex = model.index; }
                                    }
+
                         ToolTip {id: __tooltip; visible: parent.hovered; x: 0; y: parent.height; text: model.path; delay: 2000 }
                         FileActionDialog{id: __fileActionDialog; x: mouseX; y: parent.height; onRemove: {__rmDialog.open()} onRename: parent.reneaming = true;}
                         PopupAcceptRemove{id:__rmDialog; fname: model.name; onAccept: __filesManager.remove(model.index)}
