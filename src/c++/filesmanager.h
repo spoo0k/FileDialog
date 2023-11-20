@@ -7,6 +7,7 @@
 #include <types/filenode.h>
 
 
+
 namespace FileDialog
 {
     class FilesManager : public QAbstractListModel
@@ -18,6 +19,7 @@ namespace FileDialog
         Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged FINAL)
 
     public:
+
         enum ModelRoles {
             Index = Qt::UserRole + 1,
             Name,
@@ -29,6 +31,7 @@ namespace FileDialog
             Owner,
             Permissions
         };
+        Q_ENUM(ModelRoles)
 
     public:
         explicit FilesManager(QObject *parent = nullptr);

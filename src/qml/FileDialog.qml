@@ -43,6 +43,9 @@ Dialog {
             Item{Layout.fillWidth: true}
         }
     }
+    SortedModel {id: __sortedModel
+        sourceModel: __filesManager
+    }
 
     FilesManager { id: __filesManager }
 
@@ -55,6 +58,54 @@ Dialog {
         property color transparent: "#00000000"
     }
     Item {id: __parentItem}
+
+
+    component FileDialogHeader: Control {
+        id: __fileLineHeader
+        property string name;
+        property string size;
+        bottomPadding: 2
+        background: Rectangle {color: __pallette.transparent}
+        implicitHeight: __hName.implicitHeight * 1.4
+        signal sortChanged(var newRole)
+
+        RowLayout {
+            anchors.fill: parent
+            Button {
+                enabled: false
+                Layout.fillHeight: true
+                Layout.preferredWidth: height
+                palette.button: __pallette.transparent
+                Material.background: __pallette.transparent
+                flat: true
+                hoverEnabled: false
+            }
+            Rectangle {visible: true; color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
+            Button {
+                id: __hName
+                padding: 0
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                background: Rectangle{color: __pallette.black; opacity: parent.pressed ? 0.2 : 0}
+                text: __fileLineHeader.name
+                onClicked: {__fileLineHeader.sortChanged(FilesManager.Name); }
+            }
+
+
+            Rectangle {visible: true; color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
+            Button {
+                id: __hSize
+                padding: 0
+                Layout.fillHeight: true
+//                Layout.fillWidth: true
+                Layout.preferredWidth: baseItem.width / 4
+                background: Rectangle{color: __pallette.black; opacity: parent.pressed ? 0.2 : 0}
+                text: __fileLineHeader.name
+                onClicked: __fileLineHeader.sortChanged(FilesManager.Size)
+            }
+        }
+        Rectangle {width: parent.width; height: 1; y : parent.height}
+    }
 
     component FileLineDelegate: Control {
         id: __fileLineDelegate
@@ -227,7 +278,16 @@ Dialog {
             ColumnLayout {
                 anchors.fill: parent
                 spacing: 0
-                FileLineDelegate {isHeader: true; Layout.fillWidth: true; name: "Имя"; size: "Размер"}
+                FileDialogHeader {
+                    Layout.fillWidth: true; name: "Имя"; size: "Размер";
+                    onSortChanged: {
+                        if(__sortedModel.sortRole !== newRole)
+                            __sortedModel.sortRole = newRole;
+                        else {
+                            __sortedModel.changeSortOrder();
+                        }
+                    }
+                }
                 Control {background: Rectangle{color: __pallette.background;} Layout.fillWidth: true; Layout.preferredHeight: 2; Layout.leftMargin: 2; Layout.rightMargin: 2;}
                 ListView {
                     id: __dataLv
@@ -236,7 +296,7 @@ Dialog {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.margins: 5
-                    model: __filesManager
+                    model: __sortedModel
                     spacing: 5
                     delegate: FileLineDelegate {
                         reneaming: __dataLv.accessedIndex === model.index && enableReaname

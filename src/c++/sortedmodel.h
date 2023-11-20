@@ -2,15 +2,24 @@
 #define SORTEDMODEL_H
 
 #include <QtCore/QSortFilterProxyModel>
+#include <filesmanager.h>
 
-class SortedModel : public QObject
+namespace FileDialog
 {
-    Q_OBJECT
-public:
-    explicit SortedModel(QObject *parent = nullptr);
+    class SortedModel : public QSortFilterProxyModel
+    {
+        Q_OBJECT
+    public:
+        explicit SortedModel(QObject *parent = nullptr);
+        Q_INVOKABLE void changeSortOrder();
 
-signals:
+    protected:
+        bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 
-};
+
+    private:
+        Qt::SortOrder m_sOrder = Qt::AscendingOrder;
+    };
+}
 
 #endif // SORTEDMODEL_H

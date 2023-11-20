@@ -10,6 +10,7 @@
 #include <QtWidgets/QApplication>
 
 #include <filesmanager.h>
+#include <sortedmodel.h>
 
 
 
@@ -45,6 +46,7 @@ int main(int argc, char* argv[]) {
     QObject::connect(&engine, &QQmlEngine::quit, qApp, &QCoreApplication::quit);
 
     qmlRegisterType<FileDialog::FilesManager>("FileDialog.FilesManager", 1, 0, "FilesManager");
+    qmlRegisterType<FileDialog::SortedModel>("FileDialog.FilesManager", 1, 0, "SortedModel");
 
     QQmlComponent component(&engine);
     QQuickWindow::setDefaultAlphaBuffer(true);
