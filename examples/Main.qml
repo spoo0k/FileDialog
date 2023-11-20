@@ -28,8 +28,8 @@ ApplicationWindow  {
     }
 
     Component.onCompleted: {
-        window_root.x = Qt.application.screens[1].virtualX;
-        window_root.y = Qt.application.screens[1].virtualY;
+        window_root.x = Qt.application.screens[1 % Qt.application.screens.length].virtualX;
+        window_root.y = Qt.application.screens[1 % Qt.application.screens.length].virtualY;
         window_root.visibility = Window.FullScreen;
         window_root.visible = true;
     }

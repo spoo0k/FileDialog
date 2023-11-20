@@ -64,14 +64,14 @@ Dialog {
         property string size;
         property string iconSource;
         property bool isHeader: false;
-        property alias mouseX: __fl_ma.mouseX
-        property alias mouseY: __fl_ma.mouseY
-        property alias reneaming: __name.enabled
+        property real mouseX: __fl_ma.mouseX
+        property real mouseY: __fl_ma.mouseY
+        property bool reneaming: false
+        property bool enableReaname: false
         signal clicked(var mouse);
         signal pressed(var mouse);
         signal doubleClicked(var mouse);
         signal acceptRename();
-
         bottomPadding: 2
         background: Rectangle {color: __pallette.transparent}
         implicitHeight: __name.implicitHeight * 1.4
@@ -92,16 +92,14 @@ Dialog {
             Rectangle {visible: __fileLineDelegate.isHeader; color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
             TextInput {
                 id: __name
-                enabled: false
-                onFocusChanged: {
-                    console.log("focusChanged", focus)
-                }
-                onActiveFocusChanged: {console.log("onActiveFocusChanged", activeFocus)}
-                onEnabledChanged: {
-                    if(enabled) {
+                readOnly: !__fileLineDelegate.reneaming
+                onReadOnlyChanged: {
+                    if(!readOnly) {
                         forceActiveFocus()
                         selectAll();
                     }
+                    else
+                        __name.text = __fileLineDelegate.name;
                 }
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -110,8 +108,8 @@ Dialog {
                 text: __fileLineDelegate.name
                 onTextChanged: {if(text != __fileLineDelegate.name) __fileLineDelegate.newName = text;}
                 Keys.onPressed: {
-                    if(event.key === Qt.Key_Return) {parent.enabled = false; __fileLineDelegate.acceptRename()}
-                    if(event.key === Qt.Key_Escape) {parent.enabled = false; __name.text = __fileLineDelegate.name;}
+                    if(event.key === Qt.Key_Return) { __fileLineDelegate.acceptRename(); __fileLineDelegate.enableReaname = false;}
+                    if(event.key === Qt.Key_Escape) { __fileLineDelegate.enableReaname = false;}
                 }
             }
             Rectangle {visible: __fileLineDelegate.isHeader; color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
@@ -127,6 +125,7 @@ Dialog {
         }
         MouseArea {
             id: __fl_ma
+            enabled: __name.readOnly
             propagateComposedEvents: true
             anchors.fill: parent
             acceptedButtons: Qt.RightButton | Qt.LeftButton
@@ -232,6 +231,7 @@ Dialog {
                 Control {background: Rectangle{color: __pallette.background;} Layout.fillWidth: true; Layout.preferredHeight: 2; Layout.leftMargin: 2; Layout.rightMargin: 2;}
                 ListView {
                     id: __dataLv
+                    property int accessedIndex: -1
                     clip: true
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -239,6 +239,7 @@ Dialog {
                     model: __filesManager
                     spacing: 5
                     delegate: FileLineDelegate {
+                        reneaming: __dataLv.accessedIndex === model.index && enableReaname
                         width: __dataLv.width;
                         name: model.name;
                         onAcceptRename: {__filesManager.rename(model.index, newName)}
@@ -250,14 +251,17 @@ Dialog {
                                                                                                    hovered ? Qt.lighter(__pallette.background, 1.8) :
                                                                                                              __pallette.transparent }
                         onClicked: (mouse) => {
+                                       __dataLv.accessedIndex = model.index;
                                        if(mouse.button === Qt.LeftButton) { __filesManager.currentIndex = __filesManager.currentIndex === model.index ? -1 : model.index; }
                                        if(mouse.button === Qt.RightButton) { __fileActionDialog.open(); __filesManager.currentIndex = model.index; }
                                    }
-
                         ToolTip {id: __tooltip; visible: parent.hovered; x: 0; y: parent.height; text: model.path; delay: 2000 }
-                        FileActionDialog{id: __fileActionDialog; x: mouseX; y: parent.height; onRemove: {__rmDialog.open()} onRename: parent.reneaming = true;}
+                        FileActionDialog{ id: __fileActionDialog; x: parent.mouseX; y: parent.height; onRemove: __rmDialog.open(); onRename: parent.enableReaname = true; }
                         PopupAcceptRemove{id:__rmDialog; fname: model.name; onAccept: __filesManager.remove(model.index)}
-                        Connections{target: __dataLv; function onContentYChanged() {__fileActionDialog.close()} }
+                        Connections{target: __dataLv;
+                            function onContentYChanged() {__fileActionDialog.close(); enableReaname = false;}
+                            function onAccessedIndexChanged(){if(__dataLv.accessedIndex !== model.index) enableReaname = false}
+                        }
                     }
                 }
             }
@@ -367,7 +371,7 @@ Dialog {
     }
 
     onOpened: {
-        __filesManager.currentPath = "/home/user/";
+        __filesManager.currentPath = "/home/spook/";
     }
 }
 
