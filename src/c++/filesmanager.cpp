@@ -34,10 +34,12 @@ QVariant FilesManager::data(const QModelIndex &index, int role) const
         return index.row();
     case ModelRoles::Name:
         return m_data.at(index.row()).name;
+    case ModelRoles::CompleteSuffix:
+        return m_data.at(index.row()).completeSuffix;
     case ModelRoles::Path:
         return m_data.at(index.row()).absolutePath;
     case ModelRoles::Size:
-        return Utils::Files::formatFileSize(m_data.at(index.row()).size);
+        return QVariant::fromValue(m_data.at(index.row()).size);
     case ModelRoles::CreateTime:
         return m_data.at(index.row()).createTime.toString("dd.mm.yyyy");
     case ModelRoles::UpdateTime:
@@ -58,6 +60,7 @@ QHash<int, QByteArray> FilesManager::roleNames() const
     auto roles = QAbstractListModel::roleNames();
     roles[ModelRoles::Index] = "index";
     roles[ModelRoles::Name] = "name";
+    roles[ModelRoles::CompleteSuffix] = "completeSuffix";
     roles[ModelRoles::Path] = "path";
     roles[ModelRoles::Size] = "size";
     roles[ModelRoles::CreateTime] = "createTime";

@@ -23,6 +23,7 @@ namespace FileDialog
         enum ModelRoles {
             Index = Qt::UserRole + 1,
             Name,
+            CompleteSuffix,
             Path,
             Size,
             CreateTime,

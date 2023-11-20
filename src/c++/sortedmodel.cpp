@@ -7,6 +7,7 @@ SortedModel::SortedModel(QObject *parent)
     : QSortFilterProxyModel{parent}
 {
     setDynamicSortFilter(true);
+    setFilterRole(FilesManager::ModelRoles::Name);
     connect(this, &QSortFilterProxyModel::sortRoleChanged, this, [this](auto role){sort(0, m_sOrder);});
 }
 
@@ -23,11 +24,29 @@ void SortedModel::changeSortOrder()
 
 bool SortedModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    QVariant leftData = sourceModel()->data(left, filterRole());
-    QVariant rightData = sourceModel()->data(right, filterRole());
-    qDebug() << "hello";
-    if(filterRole() == FilesManager::ModelRoles::Name) {
+    QVariant leftData = sourceModel()->data(left, sortRole());
+    QVariant rightData = sourceModel()->data(right, sortRole());
+    if(sortRole() == FilesManager::ModelRoles::Name) {
         return QString::compare(leftData.toString(), rightData.toString(), Qt::CaseInsensitive);
     }
+    else if(sortRole() == FilesManager::ModelRoles::Size) {
+        return leftData.toULongLong() < rightData.toULongLong();
+    }
     return true;
+}
+
+bool SortedModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+    const QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+    auto postfix = index.data(FilesManager::ModelRoles::CompleteSuffix).toString();
+    return ("." + postfix) == fileFormat();
+}
+
+QString SortedModel::fileFormat() const { return m_fileFormat; }
+void SortedModel::setFileFormat(const QString &newFileFormat)
+{
+    if (m_fileFormat == newFileFormat)
+        return;
+    m_fileFormat = newFileFormat;
+    emit fileFormatChanged();
 }

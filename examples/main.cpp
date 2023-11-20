@@ -11,6 +11,7 @@
 
 #include <filesmanager.h>
 #include <sortedmodel.h>
+#include <utils/filesutils.h>
 
 
 
@@ -47,6 +48,9 @@ int main(int argc, char* argv[]) {
 
     qmlRegisterType<FileDialog::FilesManager>("FileDialog.FilesManager", 1, 0, "FilesManager");
     qmlRegisterType<FileDialog::SortedModel>("FileDialog.FilesManager", 1, 0, "SortedModel");
+    qmlRegisterType<Utils::Files>("FileDialog.FilesUtils", 1, 0, "FilesUtils");
+    qRegisterMetaType<int64_t>("int64_t");
+    qRegisterMetaType<uint64_t>("uint64_t");
 
     QQmlComponent component(&engine);
     QQuickWindow::setDefaultAlphaBuffer(true);

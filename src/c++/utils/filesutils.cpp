@@ -4,23 +4,23 @@
 #include <QtCore/QDir>
 
 
-namespace Utils::Files {
-    bool removeFile(const QString &fName)
+namespace Utils {
+    bool Files::removeFile(const QString &fName)
     {
         return QDir().remove(fName);
     }
 
-    bool removeDir(const QString &dName)
+    bool Files::removeDir(const QString &dName)
     {
         return QDir().rmdir(dName);
     }
 
-    bool removeDirRecursively(const QString &dName)
+    bool Files::removeDirRecursively(const QString &dName)
     {
         return QDir(dName).removeRecursively();
     }
 
-    QString formatFileSize(uint64_t size)
+    QString Files::formatFileSize(uint64_t size)
     {
         static std::array<QString , 7> prefixes{ " bit", " B", " KB", " MB", " GB", " TB", " PB" };
         auto log1024 = [](auto &num) -> int{return static_cast<int>(std::log(num) / std::log(1024));};
@@ -28,7 +28,7 @@ namespace Utils::Files {
         return QString::number(static_cast<float>(size) / std::pow(1024, exp), 'f', 2) + prefixes[exp + 1];
     }
 
-    QString formatFilePermissis(const QFileDevice::Permissions permissions)
+    QString Files::formatFilePermissis(const QFileDevice::Permissions permissions)
     {
         QString result{};
         result += permissions & QFileDevice::Permission::ReadOwner  ? "r" : "_";
@@ -46,7 +46,7 @@ namespace Utils::Files {
         return result;
     }
 
-    bool rename(const QString &oldName, const QString &newName)
+    bool Files::rename(const QString &oldName, const QString &newName)
     {
         return QDir().rename(oldName, newName);
     }

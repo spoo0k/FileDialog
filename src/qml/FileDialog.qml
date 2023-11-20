@@ -4,9 +4,13 @@ import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.15
 
 import FileDialog.FilesManager 1.0
+import FileDialog.FilesUtils 1.0
 
 Dialog {
     id: baseItem
+    property alias fileFormat: __sortedModel.fileFormat
+    property alias path: __filesManager.currentPath
+    property string fileUrl: "";
     parent: Overlay.overlay
     anchors.centerIn: parent
     width: parent.width * 2/3
@@ -43,11 +47,9 @@ Dialog {
             Item{Layout.fillWidth: true}
         }
     }
-    SortedModel {id: __sortedModel
-        sourceModel: __filesManager
-    }
-
+    SortedModel {id: __sortedModel; sourceModel: __filesManager }
     FilesManager { id: __filesManager }
+    FilesUtils{id: __filesUtils}
 
     QtObject {
         id: __pallette
@@ -88,7 +90,7 @@ Dialog {
                 Layout.fillWidth: true
                 background: Rectangle{color: __pallette.black; opacity: parent.pressed ? 0.2 : 0}
                 text: __fileLineHeader.name
-                onClicked: {__fileLineHeader.sortChanged(FilesManager.Name); }
+                onClicked: {__fileLineHeader.sortChanged(FilesManager.Name);}
             }
 
 
@@ -97,10 +99,9 @@ Dialog {
                 id: __hSize
                 padding: 0
                 Layout.fillHeight: true
-//                Layout.fillWidth: true
                 Layout.preferredWidth: baseItem.width / 4
                 background: Rectangle{color: __pallette.black; opacity: parent.pressed ? 0.2 : 0}
-                text: __fileLineHeader.name
+                text: __fileLineHeader.size
                 onClicked: __fileLineHeader.sortChanged(FilesManager.Size)
             }
         }
@@ -303,7 +304,7 @@ Dialog {
                         width: __dataLv.width;
                         name: model.name;
                         onAcceptRename: {__filesManager.rename(model.index, newName)}
-                        size: model.size;
+                        size: __filesUtils.formatFileSize(model.size);
                         iconSource: "qrc:/file.svg"
                         hoverEnabled: true
 
@@ -391,7 +392,7 @@ Dialog {
                             id: __searchType
                             width: contentWidth
                             height: contentHeight
-                            text: ".json"
+                            text: __sortedModel.fileFormat//".json"
                             color: __pallette.white
                         }
                     }
@@ -428,10 +429,6 @@ Dialog {
                 }
             }
         }
-    }
-
-    onOpened: {
-        __filesManager.currentPath = "/home/spook/";
     }
 }
 

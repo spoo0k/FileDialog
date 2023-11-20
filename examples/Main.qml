@@ -17,6 +17,8 @@ ApplicationWindow  {
 
     FileDialog {
         id: fileDialog
+        path: "/home/spook"
+        fileFormat: ".json"
     }
 
     Shortcut {
