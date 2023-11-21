@@ -19,7 +19,7 @@ ApplicationWindow  {
         id: fileDialog
         path: "/home/user"
         fileFormat: ".json"
-        selectNoExistFile: true
+        selectNoExistFile: false
         onAccepted: {
             console.log(fileUrl)
         }

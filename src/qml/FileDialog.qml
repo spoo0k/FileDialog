@@ -226,6 +226,7 @@ Dialog {
         parent: __parentItem.parent
         anchors.centerIn: parent
         property string fname;
+        property string title;
         signal accept();
         signal reject();
         modal: true
@@ -235,7 +236,7 @@ Dialog {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 color: __pallette.white
-                text: "Вы Уверены что хотите удалить: "
+                text: __popupAcceptRemove.title
             }
             Label{
                 Layout.fillWidth: true
@@ -321,7 +322,7 @@ Dialog {
                                    }
                         ToolTip {id: __tooltip; visible: parent.hovered; x: 0; y: parent.height; text: model.path; delay: 2000 }
                         FileActionDialog{ id: __fileActionDialog; x: parent.mouseX; y: parent.height; onRemove: __rmDialog.open(); onRename: parent.enableReaname = true; }
-                        PopupAcceptRemove{id:__rmDialog; fname: model.name; onAccept: __filesManager.remove(model.index)}
+                        PopupAcceptRemove{id:__rmDialog; title: "Вы Уверены что хотите удалить: "; fname: model.name; onAccept: __filesManager.remove(model.index)}
                         Connections{target: __dataLv;
                             function onContentYChanged() {__fileActionDialog.close(); enableReaname = false;}
                             function onAccessedIndexChanged(){if(__dataLv.accessedIndex !== model.index) enableReaname = false}
@@ -394,7 +395,22 @@ Dialog {
                                     font.bold: true
                                     text: "Имя файла"
                                 }
-                                onTextChanged:  {__sortedModel.searchPattern = text;}
+                                onTextChanged:  {
+                                    if(!baseItem.selectNoExistFile)
+                                        __sortedModel.searchPattern = text;
+                                    else {
+                                        __filesManager.currentIndex = -1;
+                                    }
+                                }
+                                Connections {
+                                    target: __filesManager
+                                    function onCurrentIndexChanged() {
+                                        if(!baseItem.selectNoExistFile) return;
+                                        if(__filesManager.currentIndex != -1 ) {
+                                            __inputFileName.text = __filesUtils.removeFileNameFormat(__filesManager.currentName(), __sortedModel.fileFormat);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -444,10 +460,25 @@ Dialog {
                     palette.button: enabled ? Qt.darker(__pallette.background, 1.2) : Qt.darker(__pallette.background, 1.7)
                     onClicked: {
                         if(baseItem.selectNoExistFile) {
-                            baseItem.fileUrl = __filesManager.currentPath + __inputFileName.text + __sortedModel.fileFormat; // format this
+                            if(__filesUtils.fileExist(__filesManager.currentPath + __inputFileName.text + __sortedModel.fileFormat)) {
+                                __overwriteDialog.open()
+                                return;
+                            }
+                            else {
+                                baseItem.fileUrl = __filesManager.currentPath + __inputFileName.text + __sortedModel.fileFormat; // format this
+                            }
                         }
                         else { baseItem.fileUrl = __filesManager.path(__filesManager.currentIndex) }
                         baseItem.accept()
+                    }
+                    PopupAcceptRemove{
+                        id:__overwriteDialog;
+                        title: "Вы Уверены что хотите перезаписать: ";
+                        fname: __inputFileName.text + __sortedModel.fileFormat;
+                        onAccept: {
+                            baseItem.fileUrl = __filesManager.currentPath + __inputFileName.text + __sortedModel.fileFormat;
+                            baseItem.accept()
+                        }
                     }
                 }
                 Button{

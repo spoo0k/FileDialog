@@ -61,4 +61,9 @@ namespace Utils {
         return QDir().rename(oldName, newName);
     }
 
+    bool Files::fileExist(const QString &fName)
+    {
+        return QFile(fName).exists();
+    }
+
 }

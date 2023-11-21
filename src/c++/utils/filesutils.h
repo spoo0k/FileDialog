@@ -17,6 +17,7 @@ namespace Utils
         static bool removeDir(const QString &dName);
         static bool removeDirRecursively(const QString &dName);
         static bool rename(const QString &oldName, const QString &newName);
+        Q_INVOKABLE static bool fileExist(const QString &fName);
 
         Q_INVOKABLE static QString formatFileSize(uint64_t size);
         Q_INVOKABLE static QString formatFilePermissis(QFileDevice::Permissions permissions);
