@@ -425,6 +425,7 @@ Dialog {
                                     if(!baseItem.selectNoExistFile)
                                         __sortedModel.searchPattern = text;
                                     else {
+                                        if(text !== __filesUtils.removeFileNameFormat(__filesManager.currentName(), __sortedModel.fileFormat))
                                         __filesManager.currentIndex = -1;
                                     }
                                 }
