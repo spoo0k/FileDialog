@@ -1,7 +1,8 @@
 #include "sortedmodel.h"
 #include <QtCore/QDebug>
 
-#include <utils/filesutils.h>
+#include "filesmanager.h"
+#include "utils/filesutils.h"
 
 using namespace FileDialog;
 

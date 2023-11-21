@@ -4,7 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QAbstractListModel>
 
-#include <types/filenode.h>
+#include "types/filenode.h"
 
 
 

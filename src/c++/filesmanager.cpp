@@ -4,7 +4,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
-#include <utils/filesutils.h>
+#include "utils/filesutils.h"
 
 #define assertm(exp, msg) assert(((void)msg, exp))
 

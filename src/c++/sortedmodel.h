@@ -2,7 +2,6 @@
 #define SORTEDMODEL_H
 
 #include <QtCore/QSortFilterProxyModel>
-#include <filesmanager.h>
 
 namespace FileDialog
 {

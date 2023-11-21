@@ -2,7 +2,7 @@
 #define REGISTER_H
 
 
-namespace Register {
+namespace FileDialog {
     void register_module();
 }
 

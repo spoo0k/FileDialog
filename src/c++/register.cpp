@@ -2,9 +2,9 @@
 
 #include <QtQml/QtQml>
 
-#include <sortedmodel.h>
-#include <filesmanager.h>
-#include <utils/filesutils.h>
+#include "sortedmodel.h"
+#include "filesmanager.h"
+#include "utils/filesutils.h"
 
 inline void initialize_resources_within_namespace()
 {
@@ -15,7 +15,7 @@ inline void initialize_resources_within_namespace()
 }
 
 
-void Register::register_module()
+void FileDialog::register_module()
 {
     initialize_resources_within_namespace();
 
