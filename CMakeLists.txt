@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 
 project(FileDialog LANGUAGES CXX VERSION 3.0.0)
 
-set(COMPANY "Radar-MMS")
-set(COPYRIGHT "Copyright (c) 2023 ${COMPANY}. All rights reserved.")
-set(IDENTIFIER "${PROJECT_NAME}")
-
 if(TARGET ${PROJECT_NAME})
     return()
 endif()
