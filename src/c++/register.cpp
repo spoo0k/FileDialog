@@ -26,4 +26,5 @@ void FileDialog::register_module()
     qmlRegisterType<FileDialog::FilesManager>("FileDialog.FilesManager", 1, 0, "FilesManager");
     qmlRegisterType<FileDialog::SortedModel>("FileDialog.FilesManager", 1, 0, "SortedModel");
     qmlRegisterType<Utils::Files>("FileDialog.FilesUtils", 1, 0, "FilesUtils");
+    qmlRegisterType(QUrl("qrc:/FileDialogQml/FileDialog.qml"), "FileDialog", 1, 0, "FileDialog");
 }

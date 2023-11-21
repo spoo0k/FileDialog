@@ -44,7 +44,7 @@ bool SortedModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParen
     const QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
     auto postfix = "." + index.data(FilesManager::ModelRoles::CompleteSuffix).toString();
     auto name = index.data(FilesManager::ModelRoles::Name).toString();
-    return (postfix) == fileFormat() && Utils::Files::removeFileNameFormat(name, postfix).contains(searchPattern());
+    return ((postfix) == fileFormat() || fileFormat().isEmpty()) && Utils::Files::removeFileNameFormat(name, postfix).contains(searchPattern());
 }
 
 QString SortedModel::fileFormat() const { return m_fileFormat; }
