@@ -106,6 +106,14 @@ void FilesManager::clear()
     endRemoveRows();
 }
 
+QString FilesManager::path(int index)
+{
+    if(index < 0 || index >= m_data.size()) {
+        return {};
+    }
+    return m_data.at(index).absolutePath;
+}
+
 QString FilesManager::name(int index)
 {
     if(index < 0 || index >= m_data.size()) {
@@ -131,13 +139,14 @@ void FilesManager::rename(int index, QString newName)
     auto res = Utils::Files::rename(m_data.at(index).absolutePath, newPath);
     if(not res) {
         emit dataChanged(createIndex(index, 0), createIndex(index, 0));
-        qWarning() << "Error rename file from : " << m_data.at(index).absolutePath<< ". To: " << newPath;
+        qWarning() << "Error rename file from : " << m_data.at(index).absolutePath << ". To: " << newPath;
     }
     else{
+        qInfo() << "Rename file from : " << m_data.at(index).absolutePath << ". To: " << newPath;
         m_data[index].absolutePath = newPath;
         m_data[index].name = newName;
         emit dataChanged(createIndex(index, 0), createIndex(index, 0));
-        qInfo() << "Rename file from : " << m_data.at(index).absolutePath<< ". To: " << newPath;
+        emit currentIndexChanged();
     }
 }
 
@@ -150,6 +159,9 @@ void FilesManager::remove(int index)
         beginRemoveRows(QModelIndex(), index, index);
         m_data.erase(m_data.cbegin() + index);
         endRemoveRows();
+    }
+    if(index == currentIndex()) {
+        setCurrentIndex(-1);
     }
 }
 
@@ -165,9 +177,13 @@ void FilesManager::setTargetPath(const QString &newTargetPath)
 QString FilesManager::currentPath() const { return m_currentPath; }
 void FilesManager::setCurrentPath(const QString &newCurrentPath)
 {
+
     if (m_currentPath == newCurrentPath)
         return;
     m_currentPath = newCurrentPath;
+    if(m_currentPath.at(m_currentPath.size() - 1 ) != QDir::separator()) {
+        m_currentPath += QDir::separator();
+    }
     emit currentPathChanged();
 }
 

@@ -40,9 +40,10 @@ namespace FileDialog
         QVariant data (const QModelIndex &index, int role) const override;
         QHash<int, QByteArray> roleNames() const override;
 
-        void refresh(const QString &dirPath);
+        Q_INVOKABLE void refresh(const QString &dirPath);
         void clear();
 
+        Q_INVOKABLE QString path(int index);
         Q_INVOKABLE QString name(int index);
         Q_INVOKABLE QString currentName();
         Q_INVOKABLE void rename(int index, QString newName);
@@ -57,7 +58,6 @@ namespace FileDialog
         void targetPathChanged();
         void currentPathChanged();
         void filterNameChanged();
-
         void currentIndexChanged();
 
     private:

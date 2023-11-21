@@ -11,6 +11,8 @@ Dialog {
     property alias fileFormat: __sortedModel.fileFormat
     property alias path: __filesManager.currentPath
     property string fileUrl: "";
+    property bool selectNoExistFile: false;
+
     parent: Overlay.overlay
     anchors.centerIn: parent
     width: parent.width * 2/3
@@ -36,6 +38,7 @@ Dialog {
                 text: baseItem.title
             }
             Label {
+                id: __selectedFile
                 visible: __filesManager.currentIndex !== -1
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -302,10 +305,10 @@ Dialog {
                     delegate: FileLineDelegate {
                         reneaming: __dataLv.accessedIndex === model.index && enableReaname
                         width: __dataLv.width;
-                        name: model.name;
-                        onAcceptRename: {__filesManager.rename(model.index, newName)}
+                        name: __filesUtils.removeFileNameFormat(model.name, __sortedModel.fileFormat);
+                        onAcceptRename: {__filesManager.rename(model.index, __filesUtils.addFileNameFormat(newName, __sortedModel.fileFormat))}
                         size: __filesUtils.formatFileSize(model.size);
-                        iconSource: "qrc:/file.svg"
+                        iconSource: "qrc:/icons/file.svg"
                         hoverEnabled: true
 
                         background: Rectangle{color: model.index === __filesManager.currentIndex ? __pallette.frostDark :
@@ -342,14 +345,28 @@ Dialog {
                         anchors.fill: parent
                         anchors.leftMargin: 5
                         anchors.rightMargin: 5
-                        Label {
+                        Button {
+                            enabled: false
                             Layout.fillHeight: true
-                            Layout.preferredWidth: contentWidth
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            text: "Имя файла"
-                            color: __pallette.white
+                            Layout.preferredWidth: height
+                            palette.button: __pallette.transparent
+                            Material.background: __pallette.transparent
+                            flat: true
+                            hoverEnabled: false
+                            icon.color: __pallette.white
+                            icon.source: baseItem.selectNoExistFile ? "qrc:/icons/open.svg" : "qrc:/icons/search.svg";
+                            icon.height: parent.height
+                            icon.width: parent.height
                         }
+
+//                        Label {
+//                            Layout.fillHeight: true
+//                            Layout.preferredWidth: contentWidth
+//                            horizontalAlignment: Text.AlignHCenter
+//                            verticalAlignment: Text.AlignVCenter
+//                            text: "Поиск"
+//                            color: __pallette.white
+//                        }
                         Rectangle {color: __pallette.background; Layout.fillHeight: true; Layout.preferredWidth: 2; Layout.topMargin: 2; Layout.bottomMargin: 2;}
                         Rectangle {
                             Layout.fillHeight: true
@@ -360,12 +377,24 @@ Dialog {
                             radius: 4
                             color: Qt.lighter(__pallette.background, 2.5)
                             TextInput {
+                                id: __inputFileName
                                 anchors.fill: parent
                                 anchors.leftMargin: 5
                                 anchors.rightMargin: 5
                                 verticalAlignment: Text.AlignVCenter
                                 color: Qt.darker(__pallette.background, 1)
                                 font.bold: true
+                                Label {
+                                    enabled: parent.text.length == 0
+                                    visible: enabled;
+                                    opacity: 0.6
+                                    anchors.fill: parent
+                                    verticalAlignment: Text.AlignVCenter
+                                    color: Qt.darker(__pallette.background, 1)
+                                    font.bold: true
+                                    text: "Имя файла"
+                                }
+                                onTextChanged:  {__sortedModel.searchPattern = text;}
                             }
                         }
                     }
@@ -407,18 +436,23 @@ Dialog {
                 Item {Layout.fillWidth: true;}
                 Button{
                     id: __btAccept;
-                    text: "Принять"
-                    Material.foreground: __pallette.white
-                    Material.background: Qt.darker(__pallette.background, 1.2)
-                    palette.buttonText: __pallette.white
-                    palette.button: Qt.darker(__pallette.background, 1.2)
+                    text: baseItem.selectNoExistFile ? "Coхранить" : "Открыть"
+                    enabled: baseItem.selectNoExistFile === false ? __filesManager.currentIndex !== -1 : __inputFileName.text.length != 0
+                    Material.foreground: enabled ? __pallette.white : Qt.darker(__pallette.white, 1.5)
+                    Material.background: enabled ? Qt.darker(__pallette.background, 1.2) : Qt.darker(__pallette.background, 1.7)
+                    palette.buttonText: enabled ? __pallette.white : Qt.darker(__pallette.white, 1.5)
+                    palette.button: enabled ? Qt.darker(__pallette.background, 1.2) : Qt.darker(__pallette.background, 1.7)
                     onClicked: {
+                        if(baseItem.selectNoExistFile) {
+                            baseItem.fileUrl = __filesManager.currentPath + __inputFileName.text + __sortedModel.fileFormat; // format this
+                        }
+                        else { baseItem.fileUrl = __filesManager.path(__filesManager.currentIndex) }
                         baseItem.accept()
                     }
                 }
                 Button{
                     id: __btCancle;
-                    text: "Закрыть"
+                    text: "Отменить"
                     Material.foreground: __pallette.white
                     Material.background: Qt.darker(__pallette.background, 1.2)
                     palette.buttonText: __pallette.white
@@ -428,6 +462,14 @@ Dialog {
                     }
                 }
             }
+        }
+    }
+    onOpenedChanged: {
+        if(opened) {
+            __filesManager.currentIndex = -1;
+            __filesManager.refresh(__filesManager.currentPath);
+            __inputFileName.text = "";
+            baseItem.fileUrl = "";
         }
     }
 }

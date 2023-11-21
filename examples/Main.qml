@@ -17,8 +17,12 @@ ApplicationWindow  {
 
     FileDialog {
         id: fileDialog
-        path: "/home/spook"
+        path: "/home/user"
         fileFormat: ".json"
+        selectNoExistFile: true
+        onAccepted: {
+            console.log(fileUrl)
+        }
     }
 
     Shortcut {

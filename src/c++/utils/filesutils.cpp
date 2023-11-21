@@ -46,6 +46,16 @@ namespace Utils {
         return result;
     }
 
+    QString Files::removeFileNameFormat(const QString &fName, const QString &fNameFormat)
+    {
+        return fName.left(fName.length() - fNameFormat.length());
+    }
+
+    QString Files::addFileNameFormat(const QString &fName, const QString &fNameFormat)
+    {
+        return fName + fNameFormat;
+    }
+
     bool Files::rename(const QString &oldName, const QString &newName)
     {
         return QDir().rename(oldName, newName);

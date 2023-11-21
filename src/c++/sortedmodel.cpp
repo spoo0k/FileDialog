@@ -1,6 +1,8 @@
 #include "sortedmodel.h"
 #include <QtCore/QDebug>
 
+#include <utils/filesutils.h>
+
 using namespace FileDialog;
 
 SortedModel::SortedModel(QObject *parent)
@@ -9,6 +11,7 @@ SortedModel::SortedModel(QObject *parent)
     setDynamicSortFilter(true);
     setFilterRole(FilesManager::ModelRoles::Name);
     connect(this, &QSortFilterProxyModel::sortRoleChanged, this, [this](auto role){sort(0, m_sOrder);});
+    connect(this, &SortedModel::searchPatternChanged, this, &SortedModel::invalidateFilter);
 }
 
 void SortedModel::changeSortOrder()
@@ -38,8 +41,9 @@ bool SortedModel::lessThan(const QModelIndex &left, const QModelIndex &right) co
 bool SortedModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     const QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-    auto postfix = index.data(FilesManager::ModelRoles::CompleteSuffix).toString();
-    return ("." + postfix) == fileFormat();
+    auto postfix = "." + index.data(FilesManager::ModelRoles::CompleteSuffix).toString();
+    auto name = index.data(FilesManager::ModelRoles::Name).toString();
+    return (postfix) == fileFormat() && Utils::Files::removeFileNameFormat(name, postfix).contains(searchPattern());
 }
 
 QString SortedModel::fileFormat() const { return m_fileFormat; }
@@ -47,6 +51,19 @@ void SortedModel::setFileFormat(const QString &newFileFormat)
 {
     if (m_fileFormat == newFileFormat)
         return;
-    m_fileFormat = newFileFormat;
+    m_fileFormat.clear();
+    if(newFileFormat.at(0) != ".") {
+        m_fileFormat += ".";
+    }
+    m_fileFormat += newFileFormat;
     emit fileFormatChanged();
+}
+
+QString SortedModel::searchPattern() const { return m_searchPattern; }
+void SortedModel::setSearchPattern(const QString &newSearchPattern)
+{
+    if (m_searchPattern == newSearchPattern)
+        return;
+    m_searchPattern = newSearchPattern;
+    emit searchPatternChanged();
 }

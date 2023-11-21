@@ -20,6 +20,8 @@ namespace Utils
 
         Q_INVOKABLE static QString formatFileSize(uint64_t size);
         Q_INVOKABLE static QString formatFilePermissis(QFileDevice::Permissions permissions);
+        Q_INVOKABLE static QString removeFileNameFormat(const QString &fName, const QString &fNameFormat);
+        Q_INVOKABLE static QString addFileNameFormat(const QString &fName, const QString &fNameFormat);
     };
 }
 
