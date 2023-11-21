@@ -12,6 +12,11 @@ Dialog {
     property alias path: __filesManager.currentPath
     property string fileUrl: "";
     property bool selectNoExistFile: false;
+    padding: 8
+    leftInset: 0
+    bottomInset: 0
+    rightInset: 0
+    topInset: 0
 
     parent: Overlay.overlay
     anchors.centerIn: parent
@@ -24,6 +29,8 @@ Dialog {
     modal: true
     background: Rectangle { radius: 4; color: __pallette.background; border.color: __pallette.white; border.width: 1 }
     header : Pane{
+        padding: 8
+//        bottomInset: 0
         implicitWidth: baseItem.implicitWidth
         background: Rectangle{border.color: __pallette.white; color: Qt.darker(__pallette.background, 2.0); radius: 4}
         RowLayout{
@@ -69,9 +76,8 @@ Dialog {
         id: __fileLineHeader
         property string name;
         property string size;
-        bottomPadding: 2
         background: Rectangle {color: __pallette.transparent}
-        implicitHeight: __hName.implicitHeight * 1.4
+        implicitHeight: __hName.implicitHeight * 2
         signal sortChanged(var newRole)
 
         RowLayout {
@@ -89,10 +95,13 @@ Dialog {
             Button {
                 id: __hName
                 padding: 0
+                topInset: 0
+                bottomInset: 0
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 background: Rectangle{color: __pallette.black; opacity: parent.pressed ? 0.2 : 0}
                 text: __fileLineHeader.name
+                font.capitalization: Font.Capitalize
                 onClicked: {__fileLineHeader.sortChanged(FilesManager.Name);}
             }
 
@@ -101,10 +110,13 @@ Dialog {
             Button {
                 id: __hSize
                 padding: 0
+                topInset: 0
+                bottomInset: 0
                 Layout.fillHeight: true
                 Layout.preferredWidth: baseItem.width / 4
                 background: Rectangle{color: __pallette.black; opacity: parent.pressed ? 0.2 : 0}
                 text: __fileLineHeader.size
+                font.capitalization: Font.Capitalize
                 onClicked: __fileLineHeader.sortChanged(FilesManager.Size)
             }
         }
@@ -134,6 +146,7 @@ Dialog {
         RowLayout {
             anchors.fill: parent
             Button {
+                padding: 0
                 enabled: false
                 Layout.fillHeight: true
                 Layout.preferredWidth: height
@@ -203,7 +216,7 @@ Dialog {
                 hoverEnabled: true
                 background: Rectangle {color: parent.hovered ? Qt.lighter(__pallette.background, 1.5) : __pallette.transparent}
                 Layout.fillWidth: true
-                padding: 0
+                padding: 5
                 contentItem: Label{ verticalAlignment: Text.AlignVCenter; text: "Переименовать"; }
                 MouseArea { anchors.fill: parent; onClicked: {__faDialog.rename(); close()}}
             }
@@ -211,7 +224,7 @@ Dialog {
                 hoverEnabled: true
                 background: Rectangle {color: parent.hovered ? Qt.lighter(__pallette.background, 1.5) : __pallette.transparent}
                 Layout.fillWidth: true
-                padding: 0
+                padding: 5
                 contentItem: Label{ verticalAlignment: Text.AlignVCenter; text: "Удалить" ; }
                 MouseArea { anchors.fill: parent; onClicked: {__faDialog.remove(); close()}}
             }
@@ -244,27 +257,40 @@ Dialog {
                 verticalAlignment: Text.AlignVCenter
                 color: __pallette.white
                 text:__popupAcceptRemove.fname
+                font.bold: true
+                font.pixelSize: 18
             }
             RowLayout {
                 width:parent.width
+                anchors.topMargin: 10
                 Item{Layout.fillWidth: true}
                 Button{
-                    Layout.preferredWidth: parent.width * 4/9
+//                    Layout.preferredWidth: parent.width * 4/9
+                    padding: 0
+                    topInset: 0
+                    bottomInset: 0
+                    implicitWidth: implicitContentWidth * 1.3
                     Material.foreground: __pallette.white
                     Material.background: Qt.darker(__pallette.background, 1.2)
                     palette.buttonText: __pallette.white
                     palette.button: Qt.darker(__pallette.background, 1.2)
                     text: "Применить"
+                    font.capitalization: Font.Capitalize
                     onClicked: {__popupAcceptRemove.accept(); __popupAcceptRemove.close()}
                 }
                 Item{Layout.fillWidth: true}
                 Button{
-                    Layout.preferredWidth: parent.width * 4/9
+//                    Layout.preferredWidth: parent.width * 4/9
+                    padding: 0
+                    topInset: 0
+                    bottomInset: 0
+                    implicitWidth: implicitContentWidth * 1.3
                     Material.foreground: __pallette.white
                     Material.background: Qt.darker(__pallette.background, 1.2)
                     palette.buttonText: __pallette.white
                     palette.button: Qt.darker(__pallette.background, 1.2)
                     text: "Отменить"
+                    font.capitalization: Font.Capitalize
                     onClicked: {__popupAcceptRemove.reject(); __popupAcceptRemove.close()}
                 }
                 Item{Layout.fillWidth: true}
@@ -275,7 +301,6 @@ Dialog {
 
     contentItem: ColumnLayout {
         Rectangle {
-            id: contnet
             radius: 4
             color: Qt.lighter(__pallette.background, 1.5)
             Layout.fillWidth: true
@@ -347,6 +372,7 @@ Dialog {
                         anchors.leftMargin: 5
                         anchors.rightMargin: 5
                         Button {
+                            padding: 0
                             enabled: false
                             Layout.fillHeight: true
                             Layout.preferredWidth: height
@@ -452,7 +478,12 @@ Dialog {
                 Item {Layout.fillWidth: true;}
                 Button{
                     id: __btAccept;
+                    padding: 0
+                    topInset: 0
+                    bottomInset: 0
                     text: baseItem.selectNoExistFile ? "Coхранить" : "Открыть"
+                    font.capitalization: Font.Capitalize
+                    implicitWidth: implicitContentWidth * 1.3
                     enabled: baseItem.selectNoExistFile === false ? __filesManager.currentIndex !== -1 : __inputFileName.text.length != 0
                     Material.foreground: enabled ? __pallette.white : Qt.darker(__pallette.white, 1.5)
                     Material.background: enabled ? Qt.darker(__pallette.background, 1.2) : Qt.darker(__pallette.background, 1.7)
@@ -483,7 +514,12 @@ Dialog {
                 }
                 Button{
                     id: __btCancle;
+                    padding: 0
+                    topInset: 0
+                    bottomInset: 0
                     text: "Отменить"
+                    font.capitalization: Font.Capitalize
+                    implicitWidth: implicitContentWidth * 1.3
                     Material.foreground: __pallette.white
                     Material.background: Qt.darker(__pallette.background, 1.2)
                     palette.buttonText: __pallette.white
