@@ -36,8 +36,8 @@ set(PROJECT_EXAMPLES
 )
 
 set(PROJECT_SOURCES
-    src/qml/qml.qrc
-    resources/resources.qrc
+    src/qml/fileDialogQml.qrc
+    resources/fileDialogRc.qrc
 )
 
 add_executable(${PROJECT_NAME}

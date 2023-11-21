@@ -309,7 +309,7 @@ Dialog {
                         name: __filesUtils.removeFileNameFormat(model.name, __sortedModel.fileFormat);
                         onAcceptRename: {__filesManager.rename(model.index, __filesUtils.addFileNameFormat(newName, __sortedModel.fileFormat))}
                         size: __filesUtils.formatFileSize(model.size);
-                        iconSource: "qrc:/icons/file.svg"
+                        iconSource: "qrc:/FileDialogRc/icons/file.svg"
                         hoverEnabled: true
 
                         background: Rectangle{color: model.index === __filesManager.currentIndex ? __pallette.frostDark :
@@ -355,7 +355,7 @@ Dialog {
                             flat: true
                             hoverEnabled: false
                             icon.color: __pallette.white
-                            icon.source: baseItem.selectNoExistFile ? "qrc:/icons/open.svg" : "qrc:/icons/search.svg";
+                            icon.source: baseItem.selectNoExistFile ? "qrc:/FileDialogRc/icons/open.svg" : "qrc:/FileDialogRc/icons/search.svg";
                             icon.height: parent.height
                             icon.width: parent.height
                         }

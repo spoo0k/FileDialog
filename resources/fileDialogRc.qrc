@@ -1,6 +1,5 @@
 <RCC>
-    <qresource prefix="/resources"/>
-    <qresource prefix="/">
+    <qresource prefix="/FileDialogRc">
         <file>icons/file.svg</file>
         <file>icons/open.svg</file>
         <file>icons/search.svg</file>

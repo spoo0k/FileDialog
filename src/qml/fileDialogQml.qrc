@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource prefix="/FileDialogQml">
         <file>FileDialog.qml</file>
     </qresource>
 </RCC>
